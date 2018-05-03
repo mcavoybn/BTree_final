@@ -275,7 +275,6 @@ public class BTree{
 			}
 			TreeObject cur = root_node.keys[i];
 			if(cur.key != -1) {
-				System.out.print(cur.key + " ");
 				System.out.print(longToSequence(cur.key, seqLength) + " ");
 				System.out.print(cur.freq + " ");
 				System.out.println();

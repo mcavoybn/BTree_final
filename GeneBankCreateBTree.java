@@ -46,10 +46,13 @@ public class GeneBankCreateBTree{
 			//updates to nodes and their keys/children are written to disk
 			if (cacheFlag == 1) bt.writeCache();
 			
-			System.out.println("The B-Tree was created successfully!");
-			System.out.println("The following files were created.");
-			System.out.println("Metadata file: " + gbkFilename + ".btree.metadata." + sequenceSize  + "." + degreeArg );
-			System.out.println("B-Tree binary file: "  + gbkFilename + ".btree.data." + sequenceSize  + "." + degreeArg);
+			if(debugArg == 0 || debugArg == 1){
+				System.out.println("The B-Tree was created successfully!");
+				System.out.println("The following files were created.");
+				System.out.println("Metadata file: " + gbkFilename + ".btree.metadata." + sequenceSize  + "." + degreeArg );
+				System.out.println("B-Tree binary file: "  + gbkFilename + ".btree.data." + sequenceSize  + "." + degreeArg);
+				System.out.println();
+			}
 
 			if (debugArg == 1) {
 				//use stream to capture system output from btree node

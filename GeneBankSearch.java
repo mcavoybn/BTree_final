@@ -13,16 +13,19 @@ public class GeneBankSearch {
 	static Cache cache;
 	static BTree bt;
 
-	public static void main(String args[]) throws URISyntaxException {
+	public static void main(String args[]){
 
 		parseArgs(args);
 		
 		try {		
 			BTree bt = new BTree(new File(btreeFileName), new File(metadataFileName), cache);
 
-			System.out.println("Btree File:" + btreeFileName);
-			System.out.println("Metadata File:" + metadataFileName);
-			System.out.println("Query File:" + queryFileName);
+			if(debugLevel == 0){
+				System.out.println("Btree File:" + btreeFileName);
+				System.out.println("Metadata File:" + metadataFileName);
+				System.out.println("Query File:" + queryFileName);
+				System.out.println();
+			}
 
 			Scanner queryScanner = new Scanner(new File(queryFileName));
 			String curLine = "";
@@ -30,12 +33,14 @@ public class GeneBankSearch {
 				curLine = queryScanner.nextLine();
 				long k = bt.sequenceToLong(curLine);
 				BTreeNode searchKey = bt.search(bt.root, k);
+				
 				if(searchKey == null) return;
 				for(int i = 0; i < searchKey.keys.length; i++){
-					if(searchKey.keys[i].key == k)
+					if(searchKey.keys[i].key == k && debugLevel == 0){
 						System.out.println(bt.longToSequence(k, metaSeqLength) + " " + searchKey.keys[i].freq);
+					}
 				}				
-			}while(queryScanner.hasNextLine());			
+			}while(queryScanner.hasNextLine());	
 
 		}catch(FileNotFoundException e){
 			e.printStackTrace();
@@ -45,12 +50,13 @@ public class GeneBankSearch {
 	}
 
 	//GeneBankSearch <0/1 with/without Cache> <btree file> <query file> <Cache Size> [<debug level>]
-	public static void parseArgs(String args[]){
-		if(args.length > 5 || args.length < 3 || !args[4].equals("0"))	
-			printUsage();
-		
-		if(args.length == 5)
-			debugLevel = Integer.parseInt(args[4]);
+	public static void parseArgs(String args[]){		
+		if(args.length == 5){
+			System.out.println("debugLevel : " + debugLevel);
+			if(debugLevel != 0) printUsage();
+		}else{
+			debugLevel = -1;
+		}
 
 		if(args[0].equals("1")){
 			cacheSize = Integer.parseInt(args[3]);
@@ -58,11 +64,13 @@ public class GeneBankSearch {
 		}else {
 			cache = null;
 		}
-
 		btreeFileName = args[1];
 		queryFileName = args[2];
 		metadataFileName = btreeFileName.replace("data", "metadata");
 		metaSeqLength = Integer.parseInt(metadataFileName.split("\\.")[4]);
+
+		if(args.length > 5 || args.length < 3)	
+			printUsage();
 	}
 
 	private static void printUsage(){
