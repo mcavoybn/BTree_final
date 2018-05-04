@@ -69,21 +69,34 @@ public class GeneBankSearch {
 	 * @param args arguments from the cmmand line.
 	 */
 	public static void parseArgs(String args[]){		
-		debugLevel = 0;
+                debugLevel = 0;
 
-		if(args[0].equals("1")){
-			cacheSize = Integer.parseInt(args[3]);
-			cache = new Cache(cacheCapacity);
-		}else {
-			cache = null;
-		}
-		btreeFileName = args[1];
-		queryFileName = args[2];
-		metadataFileName = btreeFileName.replace("data", "metadata");
-		metaSeqLength = Integer.parseInt(metadataFileName.split("\\.")[4]);
+                try {
+                        if(args.length > 5 || args.length < 4)
+                                printUsage();
 
-		if(args.length > 5 || args.length < 3)	
-			printUsage();
+                        if(args.length == 5 && Integer.parseInt(args[4]) != 0)
+                                printUsage();
+
+
+                        if(args[0].equals("1")){
+                                cacheSize = Integer.parseInt(args[3]);
+                                cache = new Cache(cacheCapacity);
+                        }else if(args[0].equals("0")){
+                                cache = null;
+                        }else{
+                                printUsage();
+                        }
+
+                        btreeFileName = args[1];
+                        queryFileName = args[2];
+                        metadataFileName = btreeFileName.replace("data", "metadata");
+                        metaSeqLength = Integer.parseInt(metadataFileName.split("\\.")[4]);
+                 }catch(NumberFormatException e){
+                        printUsage();
+                }
+        }
+
 	}
 	
 	/**
