@@ -49,6 +49,11 @@ public class GeneBankCreateBTree{
 			if(debugArg == 0 || debugArg == 1){
 				System.out.println("The B-Tree was created successfully!");
 				System.out.println("The following files were created.");
+				System.out.println("Cache Enabled: " + cacheFlag==1?"yes":"no");
+				if(cacheFlag==1)
+					System.out.println("Cache size: " + cacheSize);
+				System.out.println("Sequence Length: " + sequenceSize);
+				System.out.println("Debug Level: " + debugArg);
 				System.out.println("Metadata file: " + gbkFilename + ".btree.metadata." + sequenceSize  + "." + degreeArg );
 				System.out.println("B-Tree binary file: "  + gbkFilename + ".btree.data." + sequenceSize  + "." + degreeArg);
 				System.out.println();
@@ -64,7 +69,6 @@ public class GeneBankCreateBTree{
 				bt.print(bt.root, true);
 				//restore output
 				System.setOut(console);
-				System.out.println("B-Tree key file: debug");
 			}	
 			
 		} catch (IOException e) {
@@ -79,16 +83,19 @@ public class GeneBankCreateBTree{
 
 		try{			
 			cacheFlag = Integer.parseInt(args[0]);
-			if(cacheFlag == 1) 
-				cache = new Cache(Integer.parseInt(args[4]));
-			else if(cacheFlag == 0) 
+			if(cacheFlag == 1) {
+				cacheSize = Integer.parseInt(args[4]);
+				cache = new Cache(cacheSize);
+			}else if(cacheFlag == 0) {
 				cache = null;
-			else printUsage();			
+			}else {
+				printUsage();
+			}			
 			
 			degreeArg = Integer.parseInt(args[1]);
 			//if the degree arg is 0 configure the degree so that each node fits within a memory block of size 4096
 			//each node has (2*t-1)*(8+4) + (2*t)*8 + 4 + 4 + 8 bytes
-			//(2*t-t)*(8+4) + (2*t)*8 + 4 + 4 + 8 = 4096 => t = 145 => degree = 145
+			//(2*t-t)*(8+4) + (2*t)*8 + 4 + 4 + 8 = 4096 => t = 145
 			if(degreeArg == 0) degreeArg = 145;
 			else if(degreeArg < 2) printUsage();			
 			

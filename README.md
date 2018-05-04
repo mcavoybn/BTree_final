@@ -15,7 +15,7 @@ specific sequences from the BTree.
  
 INCLUDED FILES:
 Source Files:
-* BTree.java - The main class for the BTRee. It can construct and search a BTree.
+* BTree.java - The main class for the BTree. It can construct and search a BTree.
 * BtreeNode.java - Node that is stored in the BTree. Each Node holds multiple sequences and children.
 * Cache.java - A BTree specific cache that is used to reduce the number of disk reads and writes while
 creating and searching the BTree.
@@ -39,7 +39,7 @@ Execute the following command to run the GeneBankCreateBTree.java:
  $ java  GeneBankCreateBTree <cache 0/1> <degree> <gbk file> <sequence length> <cache size> [<debug level>]
 
 <cache>: 0 for no cache or 1 to use a cache
-<degree>: Degree of Btree, 0 will default to a block size of 4096
+<degree>: Degree of Btree, 0 will default to optimal degree given a block size of 4096
 <gbk file>: file with sequences saved to it
 <sequence length>: length of subsequences allowed values are 1-31
 <Cache Size>: If cache is enabled this will be the size desired by the user

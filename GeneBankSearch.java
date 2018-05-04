@@ -1,4 +1,3 @@
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -24,6 +23,7 @@ public class GeneBankSearch {
 				System.out.println("Btree File:" + btreeFileName);
 				System.out.println("Metadata File:" + metadataFileName);
 				System.out.println("Query File:" + queryFileName);
+				if(debugLevel == 1) System.out.println("Debug Level : " + debugLevel);
 				System.out.println();
 			}
 
@@ -52,7 +52,6 @@ public class GeneBankSearch {
 	//GeneBankSearch <0/1 with/without Cache> <btree file> <query file> <Cache Size> [<debug level>]
 	public static void parseArgs(String args[]){		
 		if(args.length == 5){
-			System.out.println("debugLevel : " + debugLevel);
 			if(debugLevel != 0) printUsage();
 		}else{
 			debugLevel = -1;
