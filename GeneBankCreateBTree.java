@@ -51,7 +51,6 @@ public class GeneBankCreateBTree{
 				System.out.println("The following files were created.");
 				System.out.println("Metadata file: " + gbkFilename + ".btree.metadata." + sequenceSize  + "." + degreeArg );
 				System.out.println("B-Tree binary file: "  + gbkFilename + ".btree.data." + sequenceSize  + "." + degreeArg);
-				System.out.println();
 			}
 
 			if (debugArg == 1) {
