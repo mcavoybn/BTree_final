@@ -42,7 +42,7 @@ degree: Degree of Btree, 0 will default to a block size of 4096
 gbk file: file with sequences saved to it
 sequence length: length of subsequences allowed values are 1-31
 Cache Size: If cache is enabled this will be the size desired by the user
-Debug Level (optional): 0 for helpful diagnostics, 1 to dump information to a file.
+Debug Level (optional): 0 for helpful diagnostics, 1 to dump information to a file. Defaults to 0.
  
 The result of this program will be 2 files, a meta data file and a file containing the BTree. The files will be named:
 
@@ -58,7 +58,7 @@ degree: Degree of Btree, 0 will default to a block size of 4096
 BTree File: The file created by the GeneBankCreateBTree program. Tree metadata file created by GeneBankCreateBTree
 must also be present.
 Cache Size: If cache is enabled this will be the size desired by the user
-Debug level (optional): 0 will enable debugging output.
+Debug level (optional): 0 will enable debugging output. Defaults to 0.
 
 This will print each query string that was found and how often it appears in the sequence.
 

@@ -1,3 +1,10 @@
+/**
+ * Basic BTree node. Stores location on file,
+ * keys and key counter, children pointers, and 
+ * whether it is a leaf or not. 
+ * 
+ * @author Ben Mcavoy, Ben Peterson
+ */
 public class BTreeNode {
 	
 	public TreeObject[] keys;
@@ -6,6 +13,14 @@ public class BTreeNode {
 	public int n; //current number of keys
 	public long filePos; //position of node in file
 	
+	/**
+	 * Constructor. Sets file position and creates 
+	 * arrays large enough to hold keys and children.
+	 * Intializes all arrays.
+	 * 
+	 * @param t degree of tree
+	 * @param filePos location in the BTree file
+	 */
 	public BTreeNode(int t, long filePos) {
 		this.keys = new TreeObject[(2*t-1)];		
 		for(int i=0; i<keys.length; i++) {
@@ -22,6 +37,10 @@ public class BTreeNode {
 		this.filePos = filePos;
 	}
 	
+	/**
+	 * Prints node information. This is mostly
+	 * for troubleshooting purposes. 
+	 */
 	public void printNode() {
 		
 		System.out.println("filePos: " + filePos);
@@ -39,6 +58,12 @@ public class BTreeNode {
 		System.out.println();
 	}
 	
+	/**
+	 * Used for cache comparisions to see if nodes are equal.
+	 * 
+	 * @param t node to compare to
+	 * @return true if the same, false otherwise
+	 */
 	public boolean equals(BTreeNode t) {
 		return this.filePos == t.filePos;
 	}

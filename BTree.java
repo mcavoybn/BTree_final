@@ -3,6 +3,15 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.security.InvalidParameterException;
 
+/**
+ *  a B-tree is a self-balancing tree data structure that keeps data sorted and allows searches, 
+ *  sequential access, insertions, and deletions in logarithmic time. In this case there is no
+ *  delete method because we are only interested in building and searching the tree.
+ *  
+ * 	This BTree stores gene subsequences. Each sequence is stored in a TreeObject.
+ * 
+ *  @author Ben McAvoy, Ben Peterson
+ */
 public class BTree{
 	
 	private int t;
@@ -12,6 +21,16 @@ public class BTree{
 	RandomAccessFile btreeRAF;
 	Cache cache;
 	
+	/**
+	 * Constructor for creating a new BTree. Creates the files to store the BTree and its
+	 * meta data.
+	 * 
+	 * @param t degree of BTree
+	 * @param k subsequence length 
+	 * @param gbk filename for the gbk file
+	 * @param cache cache to use to limit disk read write. Null if no cache present.
+	 * @throws IOException if gbk file is not accessible
+	 */
 	public BTree(int t, int k, String gbk, Cache cache) throws IOException{
 		this.t = t;
 		this.seqLength = k;
@@ -28,6 +47,15 @@ public class BTree{
 		diskWrite(root);
 	}
 	
+	/**
+	 * Constructor used for searching an exsisting BTree. Loads the BTree
+	 * from the passed in files. 
+	 * 
+	 * @param BtreeFile file containing the BTree
+	 * @param metadata file containing BTree meta data
+	 * @param cache cache to use to limit disk read write. Null if no cache present.
+	 * @throws IOException if BTree or meta data file are not acessible.
+	 */
 	public BTree(File BtreeFile, File metadata, Cache cache) throws IOException {	
 		btreeRAF = new RandomAccessFile(metadata, "r");
 		this.t = btreeRAF.readInt(); //read in degree in terms of t
@@ -42,6 +70,13 @@ public class BTree{
 		this.cache = cache;
 	}
 	
+	/**
+	 * Inserts a new key into the tree. If the key 
+	 * is already present it increments the frequency 
+	 * counter for that key.
+	 * 
+	 * @param key key to be added to the BTree
+	 */
 	public void insert(long key)  {
 		//check if key is already inserted
 		BTreeNode duplicate = search(root, key);
@@ -55,6 +90,7 @@ public class BTree{
 			}
 		}
 		
+		//key does not exsist add it to the BTree
 		BTreeNode r = this.root;
 		if(r.n == 2*t-1) {
 			BTreeNode newNode = new BTreeNode(t, getFileLength());	
@@ -73,9 +109,17 @@ public class BTree{
 		}
 	}
 		
-	
+	/**
+	 * Inserts the key into a node. Will search the tree 
+	 * for the proper node to place it in and create new 
+	 * nodes as needed.
+	 * 
+	 * @param x node to start search from
+	 * @param key key to be inserted into the BTree
+	 */
 	public void insertNonFull(BTreeNode x, long key) {
 		int i = x.n - 1;
+		//check for leaf since keys can only be inserted in leaves.
 		if(x.isLeaf) {
 			while( i >= 0 && key < x.keys[i].key ) {
 				x.keys[i+1] = new TreeObject(x.keys[i].key, x.keys[i].freq);
@@ -84,7 +128,7 @@ public class BTree{
 			x.keys[i+1] = new TreeObject(key, 1);
 			x.n++;
 			nodeWrite(x);	
-		}else {
+		}else { //not a leaf, find the correct place to insert.
 			while( i >= 0 && key < x.keys[i].key) {
 				i--;
 			}
@@ -103,6 +147,14 @@ public class BTree{
 		}
 	}
 	
+	/**
+	 * Finds a key in the nodes starting with the passed in node.
+	 * This will continue to look at children until it has no more nodes.
+	 * 
+	 * @param x node to start search at
+	 * @param key key to locate in BTree
+	 * @return null if not found, otherwise returns node containing key.
+	 */
 	public BTreeNode search(BTreeNode x, long key) {
 		int i = 0;
 		BTreeNode retNode = null;
@@ -121,6 +173,14 @@ public class BTree{
 		return search(retNode,key);
 	}
 	
+	/**
+	 * Splits a full node into two seperate nodes and modifies
+	 * the parent to point to the two new nodes. 
+	 * 
+	 * @param x The parent node of y
+	 * @param i location of y in parent node array
+	 * @param y The node being split
+	 */
 	public void splitChild(BTreeNode x, int i, BTreeNode y) {
 		//x is the parent to y
 		//y is the node being split 
@@ -130,7 +190,9 @@ public class BTree{
 		z.n = t-1;
 		diskWrite(z);
 		
+		//copy keys from y to z
 		for(int j=0; j<t-1; j++) {
+			//need to create new TreeObjects to avoid passing by reference 
 			z.keys[j] = new TreeObject(y.keys[j+t].key, y.keys[j+t].freq);
 			y.keys[j+t] = new TreeObject();
 		}
@@ -141,6 +203,7 @@ public class BTree{
 			}
 		}
 		
+		//move children to correct location
 		y.n = t-1;
 		for(int j=x.n; j>i; j--) {
 			x.children[j+1] = x.children[j];
@@ -153,11 +216,19 @@ public class BTree{
 		x.keys[i] = new TreeObject(y.keys[t-1].key, y.keys[t-1].freq);
 		y.keys[t-1] = new TreeObject();
 		x.n = x.n + 1;
+		//write changes to nodes
 		nodeWrite(z);		
 		nodeWrite(y);		
 		nodeWrite(x);
 	}
 	
+	/**
+	 * Converts a gene sequence into a numerica reresentation. This 
+	 * allows for easy storage of sequences in a small space.
+	 * 
+	 * @param s String to be converted
+	 * @return numeric representation of String
+	 */
 	public long sequenceToLong(String s) {
 		if( s.length() > 31 ) throw new InvalidParameterException("stringToLong() string param must be 31 chars long !");
 		Long retVal = 0L;
@@ -175,6 +246,14 @@ public class BTree{
 		return retVal;
 	}
 	
+	/**
+	 * Turns a numeric reresentation of a gene subsequence into
+	 * its String representation.
+	 * 
+	 * @param key subsequence to be turned into a string
+	 * @param subsequenceLength how long the String should be
+	 * @return String version of the subsequence
+	 */
 	public String longToSequence(long key, int subsequenceLength) {
 		String retString = "";
 		for(int i=0; i < subsequenceLength; i++){
@@ -191,7 +270,11 @@ public class BTree{
 		return retString;
 	}
 	
-	
+	/**
+	 * Writes a node to cache or disk depending if cache is present.
+	 * 
+	 * @param node node to write to cache/disk
+	 */
 	public void nodeWrite(BTreeNode node) {
 		if (cache != null) {
 			//add node to the cache, if the cache is full addObject will return the
@@ -208,7 +291,11 @@ public class BTree{
 		
 	}
 	
-	
+	/**
+	 * Writes a node to the BTree file.
+	 * 
+	 * @param node node to be written to disk
+	 */
 	public void diskWrite(BTreeNode node) {
 		try {
 			btreeRAF = new RandomAccessFile(BtreeFile, "rw");
@@ -229,6 +316,14 @@ public class BTree{
 		}
 	}
 	
+	/**
+	 * Gets a BTree node from the cache or disk. Gets from disk
+	 * if cache is not enabled, or if the node is not found in the
+	 * cache.
+	 * 
+	 * @param filePos location of BTreeNode on disk
+	 * @return node at requested file position
+	 */
 	public BTreeNode diskRead(long filePos) {		
 		//search the cache for the node with the given filePos
 		//if it is found in the cache, return it instead of reading from disk
@@ -262,9 +357,14 @@ public class BTree{
 		return node;
 	}
 	
+	/**
+	 * In-order traversal of the btree nodes.
+	 * Print all keys of the node on each traverse step.
+	 * 
+	 * @param root_node node to start the traversal at.
+	 * @param debug allows aditional print functions for troubleshooting
+	 */
 	public void print(BTreeNode root_node, boolean debug) {	
-		//in-order traversal of the btree nodes
-		//print all keys of the node on each traverse step
 		int i;
 		for(i=0; i < 2*t-1; i++) {
 			if (!root_node.isLeaf) {
@@ -275,8 +375,8 @@ public class BTree{
 			}
 			TreeObject cur = root_node.keys[i];
 			if(cur.key != -1) {
-				System.out.print(longToSequence(cur.key, seqLength) + " ");
 				System.out.print(cur.freq + " ");
+				System.out.print(longToSequence(cur.key, seqLength));
 				System.out.println();
 			}
 		}
@@ -289,6 +389,13 @@ public class BTree{
 		}		
 	}
 	
+	/**
+	 * Gets the current length of the BTree file. This is
+	 * needed when new nodes are added to insure they are written
+	 * to end of file.
+	 * 
+	 * @return current file length
+	 */
 	private long getFileLength() {
 		long fileLength = -1L;
 		try {
@@ -302,6 +409,9 @@ public class BTree{
 		return fileLength;
 	}
 	
+	/**
+	 * Writes the cache to disk to save all node changes.
+	 */
 	public void writeCache() {
 		for (int i = cache.cacheSize(); i > 0; i--) {
 			diskWrite(cache.getLast());

@@ -4,6 +4,12 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Scanner;
 
+/**
+ * Searches a provides gene sequence file for a certain set of sequences. 
+ * The sequences are then prnted to the console if found.
+ * 
+ * @author Ben Mcavoy, Nick Figura
+ */
 public class GeneBankSearch {
 	
 	static int cacheCapacity, metaSeqLength, debugLevel, cacheSize;
@@ -12,10 +18,16 @@ public class GeneBankSearch {
 	static Cache cache;
 	static BTree bt;
 
+	/**
+	 * Main entery point for GeneBankSearch. Command line arguments are:
+	 * GeneBankSearch <0/1 with/without Cache> <btree file> <query file> <Cache Size> [<debug level>]
+	 *
+	 * @param args command line arguements
+	 */
 	public static void main(String args[]){
 
 		parseArgs(args);
-		
+		//setup BTree for search
 		try {		
 			BTree bt = new BTree(new File(btreeFileName), new File(metadataFileName), cache);
 
@@ -26,7 +38,7 @@ public class GeneBankSearch {
 				if(debugLevel == 1) System.out.println("Debug Level : " + debugLevel);
 				System.out.println();
 			}
-
+			//search for gene subsequences
 			Scanner queryScanner = new Scanner(new File(queryFileName));
 			String curLine = "";
 			do{				
@@ -50,6 +62,12 @@ public class GeneBankSearch {
 	}
 
 	//GeneBankSearch <0/1 with/without Cache> <btree file> <query file> <Cache Size> [<debug level>]
+	/**
+	 * Stores the arguments from the command line. Also verifies that 
+	 * the corret arguments were passed.
+	 * 
+	 * @param args arguments from the cmmand line.
+	 */
 	public static void parseArgs(String args[]){		
 		debugLevel = 0;
 
@@ -67,7 +85,10 @@ public class GeneBankSearch {
 		if(args.length > 5 || args.length < 3)	
 			printUsage();
 	}
-
+	
+	/**
+	 * Usage message to be printed if correct arguements are not passed. 
+	 */
 	private static void printUsage(){
 		System.err.println("Usage: Java GeneBankSearch "
 				+ "<0/1(no/with Cache)> <Btree File>"

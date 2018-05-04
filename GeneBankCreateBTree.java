@@ -4,24 +4,42 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
 
+
+/**
+ * Creates a BTree from a given gbk file. Stores the BTree on disk
+ * in two files. One file contains the meta data, the othe contians
+ * the BtreeNodes. 
+ * 
+ * @author Ben Mcavoy, Nick Figura, Ben Peterson
+ *
+ */
 public class GeneBankCreateBTree{
 
 	static int cacheFlag, degreeArg, sequenceSize, cacheSize, debugArg;
 	static String gbkFilename;
 	static Cache cache;
 	
+	/**
+	 * Main for GeneBankCreateBTree. Creates a Btree from 
+	 * passed in gbk file. Commandline usage is as follows:
+	 * 
+	 * java GeneBankCreateBTree <cache 0/1> <degree> <gbk file> <sequence length> <cache size> [<debug level>]
+	 * 
+	 * @param args Commmand line arguments
+	 */
 	public static void main(String args[]){
 		
 		parseArgs(args);
 		
 		try {
-			
+			//read in file and create BTree
 			File gbkFile = new File(gbkFilename);
 			BufferedReader gbkInput = new BufferedReader(new FileReader(gbkFile));		
 			BTree bt = new BTree(degreeArg, sequenceSize, gbkFilename, cache);			
 			StringBuilder fullSequence = new StringBuilder("Start");
 			
-			while (fullSequence != null) {
+			//while loop for multiple sequences per file
+			while (fullSequence != null) { 
 				fullSequence = parseGbkFile(gbkInput);
 				if (fullSequence != null) {
 					int seqLength = sequenceSize;
@@ -82,7 +100,15 @@ public class GeneBankCreateBTree{
 		}
 	}
 	
+	
 	//GeneBankCreateBTree <cache 0/1> <degree> <gbk file> <sequence length> <cache size> [<debug level>]
+	
+	/**
+	 * Parses the command line arguments and stores them in the correct variables.
+	 * Validates that the corret inpus have been passed in.
+	 * 
+	 * @param args Arguements from the command line
+	 */
 	private static void parseArgs(String args[]) {
 		if(args.length < 4 || args.length > 6){
 			printUsage();
@@ -121,7 +147,13 @@ public class GeneBankCreateBTree{
 
 	}
 	
-
+	/**
+	 * Reads the next gene sequence from the file and places it in a string.
+	 * Sequences starts follow the keyword ORIGIN and end at //.
+	 * 
+	 * @param gbkInput Buffered reader for the gbk file
+	 * @return next gene sequence in the file
+	 */
 	private static StringBuilder parseGbkFile(BufferedReader gbkInput) {		
 		String dnaSequence = null;
 		StringBuilder fullSequence = null;
@@ -167,6 +199,10 @@ public class GeneBankCreateBTree{
 		return fullSequence;
 	}
 
+	/**
+	 * Prints the usage statement for the program. This is called when the passed
+	 * in parameters are incorrect. 
+	 */
 	private static void printUsage()
 	{
 		System.err.println("Usage: Java GeneBankCreateBTree <cache 0/1> <degree> <gbk file> <sequence length> <cache size> [<debug level>]");
