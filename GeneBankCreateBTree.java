@@ -114,7 +114,7 @@ public class GeneBankCreateBTree{
 				printUsage();
 
 			if (args.length > 5) debugArg = Integer.parseInt(args[5]);
-			else debugArg = -1;
+			else debugArg = 0;
 		}catch(NumberFormatException e){
 			printUsage();
 		} 

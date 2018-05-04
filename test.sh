@@ -33,8 +33,8 @@ javac GeneBankSearch.java
 # java GeneBankCreateBTree 1 100 test5.gbk 3 100
 # java GeneBankSearch 1 test5.gbk.btree.data.3.100 query3 1000 0
 
-java GeneBankCreateBTree 1 1000 test2.gbk 10 1000 1 
-java GeneBankSearch 1 test2.gbk.btree.data.10.1000 query16_2 100 0
+java GeneBankCreateBTree 1 1000 test2.gbk 10 1000 
+java GeneBankSearch 1 test2.gbk.btree.data.10.1000 query16_2 100
 
 # java GeneBankCreateBTree 1 0 test5.gbk 16 500
 # java GeneBankSearch 1 test5.gbk.btree.data.16.145 query16_2 40 

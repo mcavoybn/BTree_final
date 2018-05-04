@@ -51,11 +51,7 @@ public class GeneBankSearch {
 
 	//GeneBankSearch <0/1 with/without Cache> <btree file> <query file> <Cache Size> [<debug level>]
 	public static void parseArgs(String args[]){		
-		if(args.length == 5){
-			if(debugLevel != 0) printUsage();
-		}else{
-			debugLevel = -1;
-		}
+		debugLevel = 0;
 
 		if(args[0].equals("1")){
 			cacheSize = Integer.parseInt(args[3]);
