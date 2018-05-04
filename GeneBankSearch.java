@@ -95,7 +95,6 @@ public class GeneBankSearch {
                  }catch(NumberFormatException e){
                         printUsage();
                 }
-        }
 
 	}
 	
