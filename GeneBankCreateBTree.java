@@ -49,17 +49,20 @@ public class GeneBankCreateBTree{
 			if(debugArg == 0 || debugArg == 1){
 				System.out.println("The B-Tree was created successfully!");
 				System.out.println("The following files were created.");
-				System.out.println("Cache Enabled: " + cacheFlag==1?"yes":"no");
-				if(cacheFlag==1)
+				if(cacheFlag==1){
+					System.out.println("Cache Enabled: yes");
 					System.out.println("Cache size: " + cacheSize);
+				}else{
+					System.out.println("Cache Enabled: no");
+				}
 				System.out.println("Sequence Length: " + sequenceSize);
 				System.out.println("Debug Level: " + debugArg);
-				System.out.println("Metadata file: " + gbkFilename + ".btree.metadata." + sequenceSize  + "." + degreeArg );
+				System.out.println("Metadata file: " + gbkFilename + ".btree.metadata." + sequenceSize  + "." + degreeArg);
 				System.out.println("B-Tree binary file: "  + gbkFilename + ".btree.data." + sequenceSize  + "." + degreeArg);
-				System.out.println();
 			}
 
 			if (debugArg == 1) {
+				System.out.print("Writing debug file...");
 				//use stream to capture system output from btree node
 				PrintStream fileOutput = new PrintStream(new File("debug"));
 				//save current output so it can be restored
@@ -69,8 +72,10 @@ public class GeneBankCreateBTree{
 				bt.print(bt.root, true);
 				//restore output
 				System.setOut(console);
+				System.out.println("Done!");
 			}	
-			
+			System.out.println("");
+
 		} catch (IOException e) {
 			System.out.println("Error in Btree creation and output");
 			e.printStackTrace();
@@ -79,7 +84,9 @@ public class GeneBankCreateBTree{
 	
 	//GeneBankCreateBTree <cache 0/1> <degree> <gbk file> <sequence length> <cache size> [<debug level>]
 	private static void parseArgs(String args[]) {
-		if(args.length < 5 || args.length > 6) printUsage();
+		if(args.length < 4 || args.length > 6){
+			printUsage();
+		} 
 
 		try{			
 			cacheFlag = Integer.parseInt(args[0]);
@@ -89,6 +96,7 @@ public class GeneBankCreateBTree{
 			}else if(cacheFlag == 0) {
 				cache = null;
 			}else {
+				System.out.println("THIS1");
 				printUsage();
 			}			
 			
@@ -104,12 +112,12 @@ public class GeneBankCreateBTree{
 			sequenceSize = Integer.parseInt(args[3]);
 			if(sequenceSize < 1 || sequenceSize > 31) 
 				printUsage();
-			
-			if (args.length > 5) 
-				debugArg = Integer.parseInt(args[5]);
+
+			if (args.length > 5) debugArg = Integer.parseInt(args[5]);
+			else debugArg = -1;
 		}catch(NumberFormatException e){
 			printUsage();
-		}
+		} 
 
 	}
 	

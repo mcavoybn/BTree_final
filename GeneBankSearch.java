@@ -36,7 +36,7 @@ public class GeneBankSearch {
 				
 				if(searchKey == null) return;
 				for(int i = 0; i < searchKey.keys.length; i++){
-					if(searchKey.keys[i].key == k && debugLevel == 0){
+					if(searchKey.keys[i].key == k){
 						System.out.println(bt.longToSequence(k, metaSeqLength) + " " + searchKey.keys[i].freq);
 					}
 				}				
